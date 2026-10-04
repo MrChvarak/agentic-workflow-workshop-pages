@@ -7,6 +7,11 @@ const dictionaryEntries = [
     definition: { en: "The trained prediction engine. It reads context and generates tokens, but has no memory between requests and cannot act on the world without a harness.", hr: "Trenirani mehanizam predviđanja. Čita kontekst i generira tokene, ali ne pamti prethodne zahtjeve i ne može djelovati u okruženju bez harnessa." }
   },
   {
+    slug: "model-provider", title: { en: "Model provider", hr: "Pružatelj modela" },
+    aliases: { en: ["model provider", "model providers", "provider", "providers"], hr: ["pružatelj modela", "pružatelja modela", "pružatelju modela", "pružateljem modela", "pružatelji modela", "pružatelje modela", "pružatelj", "pružatelja", "provider", "providera"] },
+    definition: { en: "Whatever serves a model for inference: usually a remote service such as Anthropic, OpenAI or Google, but also a local runtime such as Ollama. The harness does not run the model; it sends tokens to a provider and gets predictions back.", hr: "Ono što poslužuje model za inference: obično udaljena usluga poput Anthropica, OpenAI-ja ili Googlea, ali i lokalni runtime poput Ollame. Harness sam ne pokreće model; šalje tokene pružatelju i prima predikcije." }
+  },
+  {
     slug: "harness", title: { en: "Harness", hr: "Harness" },
     aliases: { en: ["harness", "harnesses"], hr: ["harness", "harnessa", "harnessu", "harnessom"] },
     definition: { en: "The software around a model that makes it an agent: tools, system instructions, context management and permissions. It executes the tool calls the model requests.", hr: "Softver oko modela koji ga pretvara u agenta: alati, sistemske upute, upravljanje kontekstom i dozvole. Izvršava pozive alata koje model zatraži." }
@@ -77,6 +82,11 @@ const dictionaryEntries = [
     definition: { en: "Confident but incorrect model output. It can invent facts or contradict information already supplied in context; plausible wording is not evidence of correctness.", hr: "Samouvjeren, ali netočan izlaz modela. Može izmišljati činjenice ili proturječiti već zadanom kontekstu; uvjerljiv tekst nije dokaz točnosti." }
   },
   {
+    slug: "attention-degradation", title: { en: "Attention degradation", hr: "Degradacija pažnje" },
+    aliases: { en: ["attention degradation"], hr: ["degradacija pažnje", "degradacije pažnje", "degradaciju pažnje", "degradacijom pažnje", "attention degradation"] },
+    definition: { en: "The attention mechanism, the system for understanding relationships between tokens, gets worse as it has more to handle.", hr: "Mehanizam pažnje, sustav za razumijevanje odnosa među tokenima, slabi kako ima više za obraditi." }
+  },
+  {
     slug: "smart-zone", title: { en: "Smart zone / dumb zone", hr: "Smart zona / dumb zona" },
     aliases: { en: ["smart zone", "smart zones", "dumb zone", "dumb zones"], hr: ["smart zona", "smart zone", "smart zonu", "smart zonom", "dumb zona", "dumb zone", "dumb zonu", "dumb zoni"] },
     definition: { en: "The smart zone is the earlier, focused part of a session. As context accumulates, the agent can drift into a dumb zone with more omissions and mistakes. The boundary is not a universal fixed percentage.", hr: "Smart zona je raniji, fokusirani dio sesije. Nakupljanjem konteksta agent može prijeći u dumb zonu s više propusta i pogrešaka. Granica nije univerzalan fiksni postotak." }
@@ -112,9 +122,20 @@ const dictionaryEntries = [
     definition: { en: "A handoff document scoping one session of work. It can stand alone or belong to a spec, and records enough context, dependencies and completion criteria for that session.", hr: "Dokument za predaju koji ograničava jednu sesiju rada. Može biti samostalan ili dio specifikacije te sadrži potreban kontekst, ovisnosti i kriterije završetka." }
   },
   {
+    slug: "checkpoint", title: { en: "Checkpoint", hr: "Checkpoint" },
+    aliases: { en: ["checkpoint", "checkpoints"], hr: ["checkpoint", "checkpointa", "checkpointu", "checkpointom", "checkpointi", "checkpointima"] },
+    definition: { en: "A record, outside the chat, of spec, plan or ticket state. The next session reads it to see where work left off and continues from the full spec plus the tasks already done.", hr: "Zapis izvan chata o stanju speca, plana ili ticketa. Sljedeća sesija ga čita da vidi gdje je rad stao i nastavlja od cijele specifikacije i već odrađenih zadataka." }
+  },
+  {
     slug: "agents-md", title: { en: "AGENTS.md / CLAUDE.md", hr: "AGENTS.md / CLAUDE.md" },
     aliases: { en: ["AGENTS.md", "CLAUDE.md"], hr: ["AGENTS.md", "CLAUDE.md"] },
     definition: { en: "A project instruction file the harness loads into context: the standing brief for work in this repository. Harnesses use conventions such as AGENTS.md or CLAUDE.md.", hr: "Datoteka projektnih uputa koju harness učitava u kontekst: trajne smjernice za rad u repozitoriju. Harnessi koriste konvencije poput AGENTS.md ili CLAUDE.md." }
+  },
+  {
+    slug: "adr", title: { en: "ADR", hr: "ADR" },
+    aliases: { en: ["ADR", "ADRs", "Architecture Decision Record", "Architecture Decision Records"], hr: ["ADR-ovi", "ADR-ova", "ADR-ovima", "ADR", "Architecture Decision Record"] },
+    source: { en: "Architecture Decision Record", hr: "Architecture Decision Record" },
+    definition: { en: "Architecture Decision Record: a short document that records why an important decision was made and which trade-offs it accepts, so later work does not have to reconstruct the reasoning.", hr: "Architecture Decision Record: kratki dokument koji bilježi zašto je važna odluka donesena i koje kompromise prihvaća, da kasniji rad ne mora rekonstruirati razloge." }
   },
   {
     slug: "skill", title: { en: "Skill", hr: "Skill" },

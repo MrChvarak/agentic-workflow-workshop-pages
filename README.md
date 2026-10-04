@@ -16,11 +16,11 @@ paths work at a GitHub Pages or GitLab Pages subpath without a base URL
 setting. `script.js` holds the English/Croatian content layer and the renderer;
 `styles.css` is the visual system; optional themes live under `themes/`.
 
-The 25-slide deck starts in **Croatian** on every page load. English remains
+The 26-slide deck starts in **Croatian** on every page load. English remains
 available through `L` or the `EN` button. Language is not stored in the URL.
 Titles, navigation labels and dictionary definitions follow the selected
-language. The last three slides link to the mentioned skills, tools and
-learning resources.
+language. The last resource slides link to the mentioned skills, tools and
+learning resources; the closing slide is the environment goal.
 
 ## Themes
 
@@ -97,7 +97,7 @@ Slide 5 links to `model-agent-harness-mcp-context-guide.html`, a standalone
 reading page with a return link to slide 5. The author's supplied English
 document is preserved verbatim in `model-agent-harness-mcp-context-guide.md`.
 Both slide locales link to this English original; a Croatian translation of
-the full guide remains TODO. The final slide also links to the Poteto/pstack
+the full guide remains TODO. The final slide grid also links to the Poteto/pstack
 interview about shipping PRs at SpaceX.
 
 After editing the guide source or its page template, regenerate the HTML:

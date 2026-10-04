@@ -30,7 +30,7 @@ const glossary = (() => {
     const entry = dictionaryEntries.find(entry => entry.slug === term.dataset.dictionaryTerm);
     tooltip.querySelector(".dictionary-tooltip__title").textContent = entry.title[language];
     tooltip.querySelector(".dictionary-tooltip__definition").textContent = entry.definition[language];
-    tooltip.querySelector(".dictionary-tooltip__source").textContent = labels[language].source;
+    tooltip.querySelector(".dictionary-tooltip__source").textContent = entry.source?.[language] ?? labels[language].source;
     tooltip.querySelector(".dictionary-tooltip__hint").textContent = labels[language].dismiss;
     tooltip.lang = language;
     tooltip.hidden = false;
