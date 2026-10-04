@@ -1,0 +1,341 @@
+/*
+  cursor-dark — presentation theme inspired by cursor.com/blog dark mode.
+  Opt-in via data-theme="cursor-dark" (see site/script.js).
+
+  Fonts (verified against cursor.com/blog CSS, 2026-09):
+  - UI / body: proprietary CursorGothic
+  - Display / large titles: proprietary cursorDisplay
+  - Mono: proprietary berkeleyMono (+ cursorMono elsewhere on cursor.com)
+  - Serif accents on some posts: EB Garamond (Google Fonts / OFL)
+
+  We do not ship Cursor’s proprietary webfonts. Stacks below are the same
+  public fallbacks Cursor declares next to those faces (Helvetica Neue /
+  system UI for sans+display; system mono stack after berkeleyMono).
+*/
+
+[data-theme="cursor-dark"] {
+  --ink: #edecec;
+  --muted: color-mix(in oklab, #edecec 58%, transparent);
+  --dim: color-mix(in oklab, #edecec 38%, transparent);
+  --bg: #14120b;
+  --panel: #1b1913;
+  --panel-2: #201e18;
+  --line: color-mix(in oklab, #edecec 10%, transparent);
+  --cyan: #f54e00;
+  --cyan-deep: #c43d00;
+  --amber: #e9b872;
+  --red: #e05c7d;
+  --blue: #83c8f0;
+  /* CursorGothic → Cursor’s published fallback */
+  --sans: system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* cursorDisplay → Cursor’s published fallback */
+  --display: system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* berkeleyMono → Cursor’s published mono fallback */
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color-scheme: dark;
+}
+
+[data-theme="cursor-dark"] body {
+  background: var(--bg);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+/* Cursor marketing pages are flat canvas — no decorative grid. */
+[data-theme="cursor-dark"] body::before {
+  display: none;
+}
+
+[data-theme="cursor-dark"] .chrome {
+  height: 64px;
+  color: var(--dim);
+  font-weight: 450;
+  letter-spacing: 0.06em;
+}
+
+[data-theme="cursor-dark"] .chrome__brand {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+[data-theme="cursor-dark"] .brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border-color: var(--line);
+  color: var(--ink);
+  font-size: 13px;
+  background: color-mix(in oklab, #edecec 4%, transparent);
+}
+
+[data-theme="cursor-dark"] .lang-toggle,
+[data-theme="cursor-dark"] .theme-toggle {
+  border-radius: 4px;
+  border-color: var(--line);
+  color: var(--ink);
+  background: transparent;
+  padding: 7px 10px;
+}
+
+[data-theme="cursor-dark"] .lang-toggle:hover,
+[data-theme="cursor-dark"] .theme-toggle:hover {
+  border-color: color-mix(in oklab, #edecec 28%, transparent);
+  background: color-mix(in oklab, #edecec 5%, transparent);
+  color: var(--ink);
+}
+
+[data-theme="cursor-dark"] .progress {
+  top: 63px;
+  background: var(--line);
+}
+
+[data-theme="cursor-dark"] .progress span {
+  height: 1px;
+  background: var(--ink);
+}
+
+[data-theme="cursor-dark"] .slide {
+  padding: 120px 10vw 100px;
+}
+
+[data-theme="cursor-dark"] .slide__inner {
+  width: min(980px, 100%);
+}
+
+[data-theme="cursor-dark"] .eyebrow {
+  color: var(--dim);
+  font-weight: 450;
+  letter-spacing: 0.1em;
+}
+
+[data-theme="cursor-dark"] h1,
+[data-theme="cursor-dark"] h2 {
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  color: var(--ink);
+}
+
+[data-theme="cursor-dark"] h1 {
+  max-width: 860px;
+  font-size: clamp(3rem, 7.2vw, 6.8rem);
+  line-height: 0.95;
+}
+
+[data-theme="cursor-dark"] h2 {
+  max-width: 880px;
+  font-size: clamp(2.1rem, 4.4vw, 4.4rem);
+  line-height: 1.02;
+}
+
+[data-theme="cursor-dark"] h3 {
+  font-family: var(--display);
+  font-weight: 575;
+  letter-spacing: -0.03em;
+}
+
+[data-theme="cursor-dark"] .lead {
+  max-width: 640px;
+  color: var(--muted);
+  font-size: clamp(1.05rem, 1.55vw, 1.28rem);
+  line-height: 1.55;
+  letter-spacing: -0.015em;
+}
+
+[data-theme="cursor-dark"] .body {
+  color: var(--muted);
+}
+
+[data-theme="cursor-dark"] .accent {
+  color: var(--cyan);
+}
+
+[data-theme="cursor-dark"] .rule {
+  background: var(--line);
+  margin: 40px 0;
+}
+
+[data-theme="cursor-dark"] .title-slide {
+  padding-bottom: 16vh;
+}
+
+[data-theme="cursor-dark"] .title-slide::after {
+  color: color-mix(in oklab, #edecec 6%, transparent);
+  font-weight: 600;
+  letter-spacing: -0.12em;
+}
+
+[data-theme="cursor-dark"] .byline {
+  color: var(--dim);
+  margin-top: 56px;
+}
+
+[data-theme="cursor-dark"] .byline span:first-child {
+  color: var(--muted);
+}
+
+[data-theme="cursor-dark"] .statement {
+  border-left-color: color-mix(in oklab, #edecec 28%, transparent);
+  font-weight: 575;
+  letter-spacing: -0.035em;
+}
+
+[data-theme="cursor-dark"] .card,
+[data-theme="cursor-dark"] .flow__node,
+[data-theme="cursor-dark"] .turn__box,
+[data-theme="cursor-dark"] .decision__item,
+[data-theme="cursor-dark"] .workflow__step,
+[data-theme="cursor-dark"] .tree,
+[data-theme="cursor-dark"] .worktree,
+[data-theme="cursor-dark"] .prompt-card,
+[data-theme="cursor-dark"] .diagram,
+[data-theme="cursor-dark"] .overview__item {
+  border-radius: 2px;
+  border-color: var(--line);
+  background: var(--panel);
+  box-shadow: none;
+}
+
+[data-theme="cursor-dark"] .card {
+  background: color-mix(in oklab, #1b1913 92%, #14120b);
+  min-height: 148px;
+  padding: 24px;
+}
+
+[data-theme="cursor-dark"] .card--cyan,
+[data-theme="cursor-dark"] .card--amber,
+[data-theme="cursor-dark"] .card--red,
+[data-theme="cursor-dark"] .card--blue {
+  border-top-width: 1px;
+  border-top-color: var(--line);
+}
+
+[data-theme="cursor-dark"] .card--cyan {
+  border-top-color: color-mix(in oklab, var(--cyan) 70%, transparent);
+}
+
+[data-theme="cursor-dark"] .card--amber {
+  border-top-color: color-mix(in oklab, var(--amber) 55%, transparent);
+}
+
+[data-theme="cursor-dark"] .card--red {
+  border-top-color: color-mix(in oklab, var(--red) 55%, transparent);
+}
+
+[data-theme="cursor-dark"] .card--blue {
+  border-top-color: color-mix(in oklab, var(--blue) 55%, transparent);
+}
+
+[data-theme="cursor-dark"] .card__number,
+[data-theme="cursor-dark"] .flow__node strong,
+[data-theme="cursor-dark"] .turn__box strong,
+[data-theme="cursor-dark"] .decision__item strong,
+[data-theme="cursor-dark"] .workflow__step::before,
+[data-theme="cursor-dark"] .worktree strong,
+[data-theme="cursor-dark"] .tree .folder,
+[data-theme="cursor-dark"] .prompt-card .key {
+  color: var(--cyan);
+}
+
+[data-theme="cursor-dark"] .prompt-card {
+  background: #100f0b;
+  color: color-mix(in oklab, #edecec 78%, transparent);
+  border-color: var(--line);
+  padding: 28px;
+}
+
+[data-theme="cursor-dark"] .diagram {
+  background: #16140f;
+}
+
+[data-theme="cursor-dark"] .diagram::before {
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, #edecec 22%, transparent), transparent);
+}
+
+[data-theme="cursor-dark"] .diagram__model {
+  border-color: color-mix(in oklab, #edecec 35%, transparent);
+  box-shadow: none;
+  background: #1b1913;
+}
+
+[data-theme="cursor-dark"] .diagram__harness {
+  border-color: color-mix(in oklab, var(--cyan) 45%, transparent);
+}
+
+[data-theme="cursor-dark"] .diagram__env {
+  border-color: color-mix(in oklab, var(--blue) 40%, transparent);
+}
+
+[data-theme="cursor-dark"] .diagram__agent {
+  border-color: color-mix(in oklab, var(--amber) 40%, transparent);
+}
+
+[data-theme="cursor-dark"] .zone__smart {
+  background: color-mix(in oklab, var(--cyan) 10%, transparent);
+  border-right-color: color-mix(in oklab, var(--cyan) 55%, transparent);
+}
+
+[data-theme="cursor-dark"] .zone__dumb {
+  background: color-mix(in oklab, var(--red) 9%, transparent);
+}
+
+[data-theme="cursor-dark"] .workflow__step--hero {
+  border-color: color-mix(in oklab, var(--cyan) 40%, transparent);
+  background: color-mix(in oklab, var(--cyan) 7%, transparent);
+}
+
+[data-theme="cursor-dark"] .decision__item.is-warn {
+  border-color: color-mix(in oklab, var(--red) 40%, transparent);
+}
+
+[data-theme="cursor-dark"] .source-links a {
+  color: var(--ink);
+  border-bottom-color: color-mix(in oklab, #edecec 28%, transparent);
+}
+
+[data-theme="cursor-dark"] .source-links a:hover {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+
+[data-theme="cursor-dark"] .footer-note::before {
+  background: color-mix(in oklab, #edecec 35%, transparent);
+}
+
+[data-theme="cursor-dark"] .controls button {
+  border-radius: 2px;
+  background: color-mix(in oklab, #14120b 82%, transparent);
+  border-color: var(--line);
+}
+
+[data-theme="cursor-dark"] .controls button:hover {
+  color: var(--ink);
+  border-color: color-mix(in oklab, #edecec 28%, transparent);
+}
+
+[data-theme="cursor-dark"] .overview {
+  background: color-mix(in oklab, #14120b 97%, black);
+}
+
+[data-theme="cursor-dark"] .overview__top {
+  color: var(--dim);
+}
+
+[data-theme="cursor-dark"] .overview__item:hover,
+[data-theme="cursor-dark"] .overview__item.current {
+  border-color: color-mix(in oklab, #edecec 28%, transparent);
+  background: color-mix(in oklab, #edecec 4%, transparent);
+}
+
+[data-theme="cursor-dark"] .overview__item small {
+  color: var(--dim);
+}
+
+@media (max-width: 600px) {
+  [data-theme="cursor-dark"] h1 {
+    font-size: clamp(2.8rem, 14vw, 5.2rem);
+  }
+
+  [data-theme="cursor-dark"] h2 {
+    font-size: clamp(2rem, 10vw, 3.6rem);
+  }
+}

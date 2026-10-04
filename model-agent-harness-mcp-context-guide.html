@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Model, Agent Harness, MCP and Context — Process guide</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide">
+  <main>
+    <nav aria-label="Guide navigation"><a href="index.html?slide=5">← Back to slide 5 / Natrag na slajd 5</a></nav>
+    <p class="eyebrow">Further reading · English original</p>
+    <article><h1 id="model-agent-harness-provider-tools-mcp-context-and-sub-agents">Model, Agent Harness, Provider, Tools, MCP, Context, and Sub-Agents</h1>
+<h2 id="1-the-big-picture">1. The Big Picture</h2>
+<p>A modern AI agent system usually contains several distinct parts:</p>
+<ul>
+<li><strong>Client / UI</strong> — where the user writes a prompt.</li>
+<li><strong>Agent harness</strong> — orchestrates the interaction with the model.</li>
+<li><strong>Model provider</strong> — hosts and runs the language model.</li>
+<li><strong>Model</strong> — reasons over the provided context and generates text or structured tool calls.</li>
+<li><strong>Tools</strong> — external capabilities such as web search, databases, Jira, GitHub, file access, calculators, APIs, etc.</li>
+<li><strong>MCP servers</strong> — a standardized way to expose tools, resources, and prompts to an agent system.</li>
+<li><strong>Sub-agents</strong> — additional agent instances created to perform specialized pieces of work.</li>
+</ul>
+<p>A simplified architecture looks like this:</p>
+<pre><code class="language-text">User
+  |
+  v
+Client / UI
+  |
+  v
+Agent Harness
+  |
+  +--------------------+
+  |                    |
+  v                    v
+Model Provider      Tools / MCP Servers
+  |                    ^
+  v                    |
+Model -----------------+
+</code></pre>
+<p>The most important idea is:</p>
+<blockquote>
+<p>The model generates decisions and outputs, while the harness controls the environment around the model.</p>
+</blockquote>
+<hr />
+<h2 id="2-what-happens-when-you-send-a-prompt">2. What Happens When You Send a Prompt?</h2>
+<p>Suppose you type:</p>
+<blockquote>
+<p>Find the open Jira tickets assigned to me.</p>
+</blockquote>
+<p>and press Enter.</p>
+<p>A simplified request flow is:</p>
+<pre><code class="language-text">1. User writes prompt
+        |
+        v
+2. Client sends prompt
+        |
+        v
+3. Harness builds model context
+        |
+        v
+4. Harness sends request to model provider
+        |
+        v
+5. Model reasons over the request
+        |
+        +----&gt; Answer directly
+        |
+        +----&gt; Request a tool call
+                     |
+                     v
+6. Harness executes the tool
+                     |
+                     v
+7. Tool result is returned to the harness
+                     |
+                     v
+8. Harness gives the result back to the model
+                     |
+                     v
+9. Model continues reasoning
+                     |
+                     v
+10. Final answer is returned to the user
+</code></pre>
+<p>The loop between <strong>model → tool → model</strong> can happen multiple times before the final answer is produced.</p>
+<hr />
+<h2 id="3-what-does-the-agent-harness-do">3. What Does the Agent Harness Do?</h2>
+<p>The <strong>agent harness</strong> is the orchestration layer around the model.</p>
+<p>Depending on the system, it may be responsible for:</p>
+<ul>
+<li>adding system instructions</li>
+<li>adding conversation history</li>
+<li>deciding which tools the model may see</li>
+<li>validating tool arguments</li>
+<li>executing tool calls</li>
+<li>requesting user approval for sensitive actions</li>
+<li>retrieving documents or memory</li>
+<li>managing context-window limits</li>
+<li>spawning sub-agents</li>
+<li>collecting sub-agent results</li>
+<li>handling retries and errors</li>
+<li>streaming the model's output to the UI</li>
+</ul>
+<p>The harness therefore controls the model's operating environment.</p>
+<p>A useful mental model is:</p>
+<pre><code class="language-text">Harness = runtime + orchestration + policy + context management
+</code></pre>
+<hr />
+<h2 id="4-what-does-the-model-provider-do">4. What Does the Model Provider Do?</h2>
+<p>The <strong>model provider</strong> operates the infrastructure that runs the model.</p>
+<p>Examples of provider responsibilities include:</p>
+<ul>
+<li>receiving the model request</li>
+<li>running inference</li>
+<li>processing tokens</li>
+<li>generating output tokens</li>
+<li>returning structured tool-call requests</li>
+<li>streaming output back to the harness</li>
+</ul>
+<p>Conceptually:</p>
+<pre><code class="language-text">Harness
+   |
+   | request:
+   | - system instructions
+   | - conversation
+   | - tools
+   | - current user message
+   v
+Model Provider
+   |
+   v
+Model
+   |
+   | generated output
+   v
+Harness
+</code></pre>
+<p>The provider generally does not decide your application's business logic.</p>
+<p>That logic usually lives in the <strong>harness</strong>.</p>
+<hr />
+<h2 id="5-who-decides-which-tool-to-use">5. Who Decides Which Tool to Use?</h2>
+<p>There are two separate decisions.</p>
+<h3 id="harness-decision">Harness decision</h3>
+<p>The harness decides:</p>
+<blockquote>
+<p>Which tools is the model allowed to know about?</p>
+</blockquote>
+<p>For example, the harness might expose:</p>
+<pre><code class="language-text">search_jira
+create_jira_issue
+search_github
+read_file
+web_search
+</code></pre>
+<p>It might intentionally hide other available tools.</p>
+<p>Reasons can include:</p>
+<ul>
+<li>permissions</li>
+<li>security</li>
+<li>relevance</li>
+<li>user settings</li>
+<li>cost</li>
+<li>application design</li>
+<li>reducing model confusion</li>
+</ul>
+<h3 id="model-decision">Model decision</h3>
+<p>The model decides:</p>
+<blockquote>
+<p>Given the tools I am allowed to see, which one should I call?</p>
+</blockquote>
+<p>For example:</p>
+<pre><code class="language-text">User:
+Find my open Jira tickets.
+
+Model:
+I need Jira data.
+
+Tool call:
+search_jira(
+    jql = &quot;assignee = currentUser() AND status != Closed&quot;
+)
+</code></pre>
+<p>The model does not actually execute the Jira API request.</p>
+<p>Instead:</p>
+<pre><code class="language-text">Model proposes tool call
+        |
+        v
+Harness validates it
+        |
+        v
+Harness executes it
+        |
+        v
+Result returned to model
+</code></pre>
+<p>So the precise relationship is:</p>
+<blockquote>
+<p><strong>The harness determines the available tool set. The model chooses among the exposed tools. The harness ultimately controls execution.</strong></p>
+</blockquote>
+<hr />
+<h2 id="6-how-does-the-model-know-how-to-use-a-tool">6. How Does the Model Know How to Use a Tool?</h2>
+<p>The model receives a description of each tool.</p>
+<p>Conceptually, a tool definition might look like:</p>
+<pre><code class="language-text">Tool: search_issues
+
+Description:
+Search Jira issues using JQL.
+
+Arguments:
+- jql: string
+- max_results: integer
+</code></pre>
+<p>The model can then generate something like:</p>
+<pre><code class="language-text">search_issues(
+    jql = &quot;assignee = currentUser() AND status != Closed&quot;,
+    max_results = 50
+)
+</code></pre>
+<p>The tool does not necessarily need to have existed when the model was trained.</p>
+<p>A sufficiently capable model can often use a new tool based only on:</p>
+<ul>
+<li>tool name</li>
+<li>description</li>
+<li>parameter schema</li>
+<li>instructions</li>
+<li>examples, if provided</li>
+</ul>
+<p>This is a major property of modern tool-using language models.</p>
+<hr />
+<h2 id="7-what-is-mcp">7. What Is MCP?</h2>
+<p><strong>MCP — Model Context Protocol — provides a standardized way for applications to expose capabilities and context to AI systems.</strong></p>
+<p>An MCP server can expose things such as:</p>
+<ul>
+<li>tools</li>
+<li>resources</li>
+<li>prompts</li>
+</ul>
+<p>For example:</p>
+<pre><code class="language-text">Jira MCP Server
+    |
+    +-- search_issues
+    +-- create_issue
+    +-- get_issue
+</code></pre>
+<p>or:</p>
+<pre><code class="language-text">GitHub MCP Server
+    |
+    +-- search_code
+    +-- read_repository
+    +-- create_pull_request
+</code></pre>
+<p>The agent harness commonly acts as an <strong>MCP client</strong>.</p>
+<hr />
+<h2 id="8-how-mcp-fits-into-the-architecture">8. How MCP Fits Into the Architecture</h2>
+<p>A typical MCP flow is:</p>
+<pre><code class="language-text">                   MCP discovery
+Agent Harness ------------------------&gt; MCP Server
+     ^                                      |
+     |                                      |
+     |      tool definitions                |
+     +--------------------------------------+
+
+Agent Harness
+     |
+     | selected tool definitions
+     v
+   Model
+</code></pre>
+<p>Then, during execution:</p>
+<pre><code class="language-text">User
+ |
+ v
+Harness
+ |
+ v
+Model
+ |
+ | &quot;Call search_issues&quot;
+ v
+Harness
+ |
+ | MCP request
+ v
+MCP Server
+ |
+ | Jira/API/database/etc.
+ v
+External System
+ |
+ v
+MCP Server
+ |
+ v
+Harness
+ |
+ v
+Model
+ |
+ v
+Final Answer
+</code></pre>
+<hr />
+<h2 id="9-does-the-harness-automatically-expose-every-mcp-tool">9. Does the Harness Automatically Expose Every MCP Tool?</h2>
+<p>Not necessarily.</p>
+<p>Suppose the harness connects to three MCP servers:</p>
+<pre><code class="language-text">Jira MCP
+    - search_issues
+    - create_issue
+    - delete_issue
+
+GitHub MCP
+    - search_code
+    - create_pull_request
+
+Internal DB MCP
+    - query_customer
+    - modify_customer
+</code></pre>
+<p>The harness might decide to expose only:</p>
+<pre><code class="language-text">search_issues
+search_code
+query_customer
+</code></pre>
+<p>The other tools may be hidden because of:</p>
+<ul>
+<li>permissions</li>
+<li>safety rules</li>
+<li>current task relevance</li>
+<li>role restrictions</li>
+<li>user approval requirements</li>
+</ul>
+<p>So the complete sequence is:</p>
+<pre><code class="language-text">MCP server advertises capabilities
+            |
+            v
+Harness discovers capabilities
+            |
+            v
+Harness selects allowed capabilities
+            |
+            v
+Model sees selected tools
+            |
+            v
+Model chooses a tool
+            |
+            v
+Harness validates and executes
+</code></pre>
+<hr />
+<h2 id="10-is-the-model-speaking-mcp-directly">10. Is the Model Speaking MCP Directly?</h2>
+<p>Usually, no.</p>
+<p>A common architecture is:</p>
+<pre><code class="language-text">Model
+ |
+ | structured tool request
+ v
+Harness
+ |
+ | translates / routes request
+ v
+MCP Client
+ |
+ v
+MCP Server
+</code></pre>
+<p>The model understands the <strong>tool description</strong> and produces a structured call.</p>
+<p>The harness handles the underlying MCP communication.</p>
+<p>This separation allows the same model to interact with many different MCP servers without needing to understand their transport implementation.</p>
+<hr />
+<h2 id="11-conversation-history-and-context">11. Conversation History and Context</h2>
+<p>Language models generally need the previous conversation to be included in their current input if they are expected to remember it.</p>
+<p>Imagine this conversation:</p>
+<pre><code class="language-text">User:
+My project is called Cloky.
+
+Assistant:
+Understood.
+
+User:
+What name did I say?
+</code></pre>
+<p>For the model to answer <strong>Cloky</strong>, the second request must contain enough information about the first request.</p>
+<p>Conceptually, the harness sends something like:</p>
+<pre><code class="language-text">System instructions
+
+User:
+My project is called Cloky.
+
+Assistant:
+Understood.
+
+User:
+What name did I say?
+</code></pre>
+<p>The model then processes this entire context.</p>
+<hr />
+<h2 id="12-the-model-is-usually-stateless-between-requests">12. The Model Is Usually Stateless Between Requests</h2>
+<p>A useful mental model is:</p>
+<pre><code class="language-text">Request 1
+Context A
+   |
+   v
+Model
+   |
+   v
+Response 1
+
+
+Request 2
+Context B
+   |
+   v
+Model
+   |
+   v
+Response 2
+</code></pre>
+<p>The model does not necessarily retain an internal persistent memory of Request 1.</p>
+<p>Instead, the application or harness reconstructs what the model needs to see for Request 2.</p>
+<p>This means:</p>
+<blockquote>
+<p>The chat system remembers the conversation; the model reasons over the context supplied for the current invocation.</p>
+</blockquote>
+<hr />
+<h2 id="13-what-can-be-inside-the-context-window">13. What Can Be Inside the Context Window?</h2>
+<p>A model's context can contain many different things:</p>
+<pre><code class="language-text">+----------------------------------+
+| System instructions              |
++----------------------------------+
+| Developer / application rules    |
++----------------------------------+
+| Previous user messages           |
++----------------------------------+
+| Previous assistant messages      |
++----------------------------------+
+| Current user message             |
++----------------------------------+
+| Tool definitions                 |
++----------------------------------+
+| Tool results                     |
++----------------------------------+
+| Retrieved documents              |
++----------------------------------+
+| Memory / summaries               |
++----------------------------------+
+| Sub-agent results                |
++----------------------------------+
+</code></pre>
+<p>All of this consumes context-window capacity.</p>
+<hr />
+<h2 id="14-what-happens-when-a-conversation-gets-too-long">14. What Happens When a Conversation Gets Too Long?</h2>
+<p>The model has a finite context window.</p>
+<p>Therefore, a harness may need to manage older information.</p>
+<p>Possible strategies include:</p>
+<h4 id="truncation">Truncation</h4>
+<p>Remove older messages.</p>
+<pre><code class="language-text">Oldest messages -&gt; removed
+Recent messages -&gt; retained
+</code></pre>
+<h4 id="summarization">Summarization</h4>
+<p>Convert many old messages into a smaller summary.</p>
+<pre><code class="language-text">50 old messages
+
+        |
+        v
+
+&quot;Earlier, the user and assistant discussed X, Y and Z.&quot;
+</code></pre>
+<h4 id="retrieval">Retrieval</h4>
+<p>Store conversation information externally and retrieve only relevant parts.</p>
+<pre><code class="language-text">Current question
+      |
+      v
+Search previous conversation
+      |
+      v
+Retrieve relevant pieces
+      |
+      v
+Add them to current context
+</code></pre>
+<p>Modern systems often combine these techniques.</p>
+<hr />
+<h2 id="15-context-is-constructed-not-global">15. Context Is Constructed, Not Global</h2>
+<p>One of the most important ideas is:</p>
+<blockquote>
+<p>There is not necessarily one giant universal conversation context shared by every agent.</p>
+</blockquote>
+<p>Instead, each model invocation gets a context constructed for that particular request.</p>
+<p>For example:</p>
+<pre><code class="language-text">Conversation database
+        |
+        v
+Harness
+        |
+        | selects relevant information
+        v
+Current Model Context
+</code></pre>
+<p>That distinction becomes especially important when sub-agents are involved.</p>
+<hr />
+<h2 id="16-what-happens-when-the-harness-creates-a-sub-agent">16. What Happens When the Harness Creates a Sub-Agent?</h2>
+<p>Suppose the main agent receives:</p>
+<blockquote>
+<p>Analyze this application architecture, check the GitHub repository, and inspect the Jira backlog.</p>
+</blockquote>
+<p>The main agent might delegate:</p>
+<pre><code class="language-text">Main Agent
+ |
+ +--&gt; Sub-agent A: inspect GitHub
+ |
+ +--&gt; Sub-agent B: analyze Jira
+ |
+ +--&gt; Sub-agent C: review architecture docs
+</code></pre>
+<p>Each sub-agent can have its <strong>own context window</strong>.</p>
+<hr />
+<h2 id="17-does-a-sub-agent-receive-the-entire-parent-context">17. Does a Sub-Agent Receive the Entire Parent Context?</h2>
+<p>Usually not automatically.</p>
+<p>Instead, the parent agent or harness commonly constructs a task-specific context.</p>
+<p>For example:</p>
+<pre><code class="language-text">Parent context:
+
+- 100 previous chat messages
+- project documentation
+- Jira data
+- GitHub data
+- user preferences
+- multiple tools
+</code></pre>
+<p>The GitHub sub-agent might receive only:</p>
+<pre><code class="language-text">Task:
+Inspect repository architecture.
+
+Relevant information:
+- repository name
+- target branch
+- architecture question
+
+Available tools:
+- GitHub search
+- GitHub file reader
+</code></pre>
+<p>The Jira sub-agent might instead receive:</p>
+<pre><code class="language-text">Task:
+Find high-priority unresolved issues.
+
+Relevant information:
+- Jira project key
+- required statuses
+
+Available tools:
+- Jira search
+</code></pre>
+<p>This creates isolation between tasks.</p>
+<hr />
+<h2 id="18-why-give-sub-agents-separate-contexts">18. Why Give Sub-Agents Separate Contexts?</h2>
+<p>Separate contexts have several advantages.</p>
+<h3 id="lower-token-usage">Lower token usage</h3>
+<p>The sub-agent receives only what it needs.</p>
+<h3 id="less-distraction">Less distraction</h3>
+<p>Irrelevant conversation does not interfere with the task.</p>
+<h3 id="better-specialization">Better specialization</h3>
+<p>The sub-agent can receive specialized instructions and tools.</p>
+<h3 id="parallelization">Parallelization</h3>
+<p>Multiple sub-agents can work independently.</p>
+<h3 id="security">Security</h3>
+<p>Sensitive information can be withheld from sub-agents that do not need it.</p>
+<hr />
+<h2 id="19-how-does-the-sub-agent-return-its-work">19. How Does the Sub-Agent Return Its Work?</h2>
+<p>A typical pattern is:</p>
+<pre><code class="language-text">Parent Agent
+     |
+     | delegated task
+     v
+Sub-Agent
+     |
+     | uses tools
+     | reasons
+     | gathers information
+     v
+Sub-Agent Result
+     |
+     v
+Parent Agent
+</code></pre>
+<p>The parent generally does not need the sub-agent's entire internal context.</p>
+<p>Instead, the sub-agent might return something like:</p>
+<pre><code class="language-text">Result:
+The repository uses MVVM.
+Networking is implemented using Ktor.
+There are three architecture violations in module X.
+</code></pre>
+<p>That result then becomes part of the parent's context.</p>
+<hr />
+<h2 id="20-multi-agent-example">20. Multi-Agent Example</h2>
+<p>Imagine this request:</p>
+<blockquote>
+<p>Review my mobile application project and tell me what should be improved.</p>
+</blockquote>
+<p>A harness could orchestrate:</p>
+<pre><code class="language-text">                         User
+                           |
+                           v
+                      Main Agent
+                           |
+          +----------------+----------------+
+          |                |                |
+          v                v                v
+   GitHub Agent       Jira Agent       Docs Agent
+          |                |                |
+          v                v                v
+   inspect code       inspect issues   inspect docs
+          |                |                |
+          +----------------+----------------+
+                           |
+                           v
+                    Main Agent Context
+                           |
+                           v
+                      Final Answer
+</code></pre>
+<p>Each sub-agent has its own context and potentially its own set of tools.</p>
+<hr />
+<h2 id="21-full-end-to-end-architecture">21. Full End-to-End Architecture</h2>
+<p>Putting everything together:</p>
+<pre><code class="language-text">                         USER
+                           |
+                           v
+                      Client / UI
+                           |
+                           v
+                    AGENT HARNESS
+                           |
+            +--------------+--------------+
+            |                             |
+            | Build context               | Discover tools
+            |                             |
+            v                             v
+       Model Provider                 MCP Servers
+            |                             |
+            v                             |
+           MODEL &lt;------------------------+
+            |
+            | decide:
+            | answer OR tool call
+            |
+            v
+        Tool Request
+            |
+            v
+     Harness Validation
+            |
+            +----------------------------+
+            |                            |
+            v                            v
+      Local/API Tool                 MCP Tool
+            |                            |
+            v                            v
+         Result                       Result
+            |                            |
+            +-------------+--------------+
+                          |
+                          v
+                        MODEL
+                          |
+                 possibly more tools
+                          |
+                          v
+                     Final Answer
+                          |
+                          v
+                        USER
+</code></pre>
+<hr />
+<h2 id="22-a-more-precise-mental-model">22. A More Precise Mental Model</h2>
+<p>The responsibilities can be summarized like this.</p>
+<h3 id="client">Client</h3>
+<blockquote>
+<p>"Capture the user's input and display the result."</p>
+</blockquote>
+<h3 id="harness">Harness</h3>
+<blockquote>
+<p>"Construct the environment in which the model operates."</p>
+</blockquote>
+<h3 id="model">Model</h3>
+<blockquote>
+<p>"Given this context and these available capabilities, determine what to do next."</p>
+</blockquote>
+<h3 id="model-provider">Model Provider</h3>
+<blockquote>
+<p>"Run the model and return its generated output."</p>
+</blockquote>
+<h3 id="tool">Tool</h3>
+<blockquote>
+<p>"Perform some external operation."</p>
+</blockquote>
+<h3 id="mcp">MCP</h3>
+<blockquote>
+<p>"Standardize how capabilities and context can be exposed to AI applications."</p>
+</blockquote>
+<h3 id="mcp-server">MCP Server</h3>
+<blockquote>
+<p>"Expose specific tools/resources/prompts and connect them to real systems."</p>
+</blockquote>
+<h3 id="sub-agent">Sub-Agent</h3>
+<blockquote>
+<p>"Perform a delegated task using its own instructions, context, and tools."</p>
+</blockquote>
+<hr />
+<h2 id="23-the-three-most-important-boundaries">23. The Three Most Important Boundaries</h2>
+<h3 id="boundary-1-harness-vs-model">Boundary 1 — Harness vs Model</h3>
+<p>The model <strong>proposes</strong> actions.</p>
+<p>The harness <strong>controls</strong> whether those actions can actually happen.</p>
+<pre><code class="language-text">Model: &quot;I want to call tool X.&quot;
+
+Harness: &quot;Is X allowed? Are the arguments valid? Does this require approval?&quot;
+</code></pre>
+<hr />
+<h3 id="boundary-2-conversation-vs-model-memory">Boundary 2 — Conversation vs Model Memory</h3>
+<p>The conversation may persist in the application.</p>
+<p>The model usually receives only the context assembled for the current request.</p>
+<pre><code class="language-text">Conversation storage
+       !=
+Model's persistent internal memory
+</code></pre>
+<hr />
+<h3 id="boundary-3-parent-agent-vs-sub-agent">Boundary 3 — Parent Agent vs Sub-Agent</h3>
+<p>A sub-agent usually does not automatically inherit the complete parent context.</p>
+<p>Instead:</p>
+<pre><code class="language-text">Parent context
+      |
+      v
+Relevant subset
+      |
+      v
+Sub-agent context
+</code></pre>
+<p>The sub-agent performs its work and returns a result.</p>
+<hr />
+<h2 id="24-short-version">24. Short Version</h2>
+<p>If you want one compact explanation, use this:</p>
+<blockquote>
+<p>When you send a prompt, the agent harness collects the relevant conversation history, instructions, tools, and other context and sends that package to the model provider. The model reasons over the package and either produces an answer or requests a tool. The harness validates and executes tool requests, possibly through MCP servers, and sends the results back to the model. This loop can repeat several times. If the harness creates a sub-agent, that sub-agent normally receives a separate, task-specific context rather than automatically inheriting the entire parent conversation. When the sub-agent finishes, its result is returned to the parent agent and can become part of the parent's context.</p>
+</blockquote>
+<hr />
+<h2 id="25-one-sentence-mental-model">25. One-Sentence Mental Model</h2>
+<blockquote>
+<p><strong>The harness builds and controls the environment, the model decides what to do inside that environment, tools perform external work, MCP standardizes how many of those capabilities are exposed, and every agent or sub-agent reasons over the specific context assembled for that invocation.</strong></p>
+</blockquote></article>
+    <nav aria-label="End of guide"><a href="index.html?slide=5">← Back to slide 5 / Natrag na slajd 5</a> · <a href="model-agent-harness-mcp-context-guide.md" download>Download Markdown</a></nav>
+  </main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="hr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" id="theme-color" content="#0b0e12" />
+    <meta name="description" content="Moj agentski workflow: od modela i konteksta do planiranja, fokusiranih faza, provjere i aktualne dokumentacije." />
+    <title>Moj agentski workflow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="themes/cursor-dark.css" />
+  </head>
+  <body>
+    <main id="deck" aria-live="polite"></main>
+
+    <div class="chrome">
+      <div class="chrome__brand"><span class="brand-mark">↗</span><span data-ui="brand">agentski workflow</span></div>
+      <div class="chrome__section" id="section-label"></div>
+      <div class="chrome__right">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Promijeni temu">tema</button>
+        <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Prebaci na engleski">EN</button>
+        <span class="slide-count" id="slide-count">01 / 23</span>
+      </div>
+    </div>
+
+    <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+
+    <nav class="controls" aria-label="Kontrole prezentacije">
+      <button id="prev" type="button" aria-label="Prethodni slajd">←</button>
+      <button id="next" type="button" aria-label="Sljedeći slajd">→</button>
+      <button id="overview" type="button" aria-label="Otvori pregled slajdova">⌘K</button>
+    </nav>
+
+    <div class="hint" id="hint">← → navigacija&nbsp;&nbsp; · &nbsp;L jezik&nbsp;&nbsp; · &nbsp;T tema&nbsp;&nbsp; · &nbsp;O pregled</div>
+    <div class="overview" id="overview-panel" aria-hidden="true">
+      <div class="overview__inner">
+        <div class="overview__top"><span data-ui="overviewTitle">Pregled</span><button id="close-overview" type="button">Esc</button></div>
+        <div class="overview__grid" id="overview-grid"></div>
+      </div>
+    </div>
+
+    <script src="dictionary.js"></script>
+    <script src="glossary.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
