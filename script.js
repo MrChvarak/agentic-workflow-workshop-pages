@@ -4,8 +4,8 @@ const slides = [
     type: "title",
     title: { en: "My<br><span class='accent'>agentic</span><br>workflow", hr: "Moj<br><span class='accent'>agentski</span><br>workflow" },
     lead: { en: "How I prepare context, define a goal, guide implementation and verify the result.", hr: "Kako pripremam kontekst, definiram cilj, vodim implementaciju i provjeravam rezultat." },
-    footer: { en: "from understanding the agent to my daily workflow", hr: "od razumijevanja agenta do mog načina rada" },
-    byline: { en: "Goran Vuković · tech lead walkthrough", hr: "Goran Vuković · walkthrough za tech leadove" }
+    footer: { en: "10.26.01", hr: "10.26.01" },
+    byline: { en: "Goran Vuković · short overview", hr: "Goran Vuković · kratki pregled" }
   },
   {
     section: { en: "01 / foundations", hr: "01 / osnove" },
@@ -66,6 +66,16 @@ const slides = [
       hr: `<div class="zone"><div class="zone__bar"><div class="zone__smart"><strong>smart zona</strong><span>fokusirano planiranje i složene promjene</span></div><div class="zone__dumb"><strong>dumb zona</strong><span>propuštene odluke, ponavljanje i skretanje</span></div></div><div class="symptoms"><div class="symptom"><b>Šum</b><span>Važne činjenice gube se među starim detaljima.</span></div><div class="symptom"><b>Proturječja</b><span>Stare i nove upute vuku u različitim smjerovima.</span></div><div class="symptom"><b>Rizik</b><span>Izmišljene tvrdnje ili implementacija koja promašuje cilj.</span></div></div></div>`
     },
     footer: { en: "quality depends on the model, task and harness; focus is not a guarantee", hr: "kvaliteta ovisi o modelu, zadatku i harnessu; fokus nije jamstvo" }
+  },
+  {
+    section: { en: "02 / context and risk", hr: "02 / kontekst i rizik" },
+    title: { en: "Where this leads: hallucination.", hr: "Gdje to vodi: halucinacija." },
+    lead: { en: "The dumb zone is not just slower work. The main symptom is hallucination: confident but incorrect model output.", hr: "Dumb zona nije samo sporiji rad. Glavni simptom je halucinacija: samouvjeren, a netočan izlaz modela." },
+    html: {
+      en: `<div class="hallucination"><div class="cards cards--2"><div class="card card--red"><span class="card__number">factuality</span><h3>Wrong facts</h3><p>Invented APIs, missing functions, stale prices. The model is reading compressed parametric knowledge, often past its knowledge cutoff. Load contextual knowledge.</p></div><div class="card card--amber"><span class="card__number">faithfulness</span><h3>Ignores the source</h3><p>The fact was already in the context window, but attention degradation in the dumb zone lets the model drift. Clear the session. Non-determinism can still do this in the smart zone, rarely.</p></div></div><div class="symptoms"><div class="symptom"><b>Parameters</b><span>Training compresses the world into frozen parameters, not a database of facts.</span></div><div class="symptom"><b>Knowledge cutoff</b><span>New libraries never entered the parameters after that date.</span></div><div class="symptom"><b>Attention</b><span>Too many attention relationships hide the instruction that mattered.</span></div></div><div class="tree-hover"><button class="tree-hover__trigger" type="button" aria-describedby="hallucination-tree-en">decision tree</button><div class="tree-hover__panel" id="hallucination-tree-en" role="tooltip"><img src="images/hallucination-decision-tree.jpg" alt="Hallucination decision tree: if the information was not in context, load it — a factuality problem. If it was in context, get out of the dumb zone — a faithfulness problem. Both paths lead to fixed." width="941" height="1024" /></div></div></div>`,
+      hr: `<div class="hallucination"><div class="cards cards--2"><div class="card card--red"><span class="card__number">factuality</span><h3>Pogrešne činjenice</h3><p>Izmišljeni API-ji, nepostojeće funkcije, zastarjele cijene. Model čita sažeto parametarsko znanje, često iza knowledge cutoffa. Učitaj kontekstualno znanje.</p></div><div class="card card--amber"><span class="card__number">faithfulness</span><h3>Zanemaruje izvor</h3><p>Činjenica je već bila u kontekstnom prozoru, ali degradacija pažnje u dumb zoni pusti model da skrene. Očisti sesiju. Nedeterminizam to ponekad napravi i u smart zoni.</p></div></div><div class="symptoms"><div class="symptom"><b>Parametri</b><span>Treniranje sažima svijet u zamrznute parametre, ne u bazu činjenica.</span></div><div class="symptom"><b>Knowledge cutoff</b><span>Nove biblioteke nisu ušle u parametre nakon tog datuma.</span></div><div class="symptom"><b>Pažnja</b><span>Previše odnosa pažnje sakrije uputu koja je bitna.</span></div></div><div class="tree-hover"><button class="tree-hover__trigger" type="button" aria-describedby="hallucination-tree-hr">stablo odluke</button><div class="tree-hover__panel" id="hallucination-tree-hr" role="tooltip"><img src="images/hallucination-decision-tree.jpg" alt="Stablo odluke za halucinaciju: ako informacija nije bila u kontekstu, učitaj je — problem činjeničnosti. Ako jest, izađi iz dumb zone — problem vjernosti. Oba puta vode do Fixed." width="941" height="1024" /></div></div></div>`
+    },
+    footer: { en: "if it was not in the context window, load a source; if it was, leave the dumb zone", hr: "ako nije bilo u kontekstnom prozoru, učitaj izvor; ako jest, izađi iz dumb zone" }
   },
   {
     section: { en: "02 / context and risk", hr: "02 / kontekst i rizik" },
@@ -285,6 +295,7 @@ const ui = {
   }
 };
 
+const defaultTheme = "cursor-dark";
 const themes = ["default", "cursor-dark"];
 const themeAliases = { cursor: "cursor-dark" };
 const themeColors = { default: "#0b0e12", "cursor-dark": "#14120b" };
@@ -295,7 +306,7 @@ current = Math.max(0, Math.min(slides.length - 1, Math.trunc(current)));
 let theme = resolveTheme(
   new URLSearchParams(location.search).get("theme") ||
   localStorage.getItem("deck-theme") ||
-  "default"
+  defaultTheme
 );
 
 const deck = document.querySelector("#deck");
@@ -310,9 +321,9 @@ const overview = document.querySelector("#overview-panel");
 const overviewGrid = document.querySelector("#overview-grid");
 
 function resolveTheme(value) {
-  const raw = String(value || "default").toLowerCase();
+  const raw = String(value || defaultTheme).toLowerCase();
   const mapped = themeAliases[raw] || raw;
-  return themes.includes(mapped) ? mapped : "default";
+  return themes.includes(mapped) ? mapped : defaultTheme;
 }
 
 function applyTheme(nextTheme) {
@@ -345,7 +356,7 @@ function stripHtml(value) { const div = document.createElement("div"); div.inner
 function syncUrl() {
   const params = new URLSearchParams();
   params.set("slide", String(current + 1));
-  if (theme !== "default") params.set("theme", theme);
+  if (theme !== defaultTheme) params.set("theme", theme);
   history.replaceState(null, "", `?${params.toString()}`);
 }
 

@@ -1,6 +1,6 @@
 /*
   cursor-dark — presentation theme inspired by cursor.com/blog dark mode.
-  Opt-in via data-theme="cursor-dark" (see site/script.js).
+  Default theme via data-theme="cursor-dark" (see site/script.js).
 
   Fonts (verified against cursor.com/blog CSS, 2026-09):
   - UI / body: proprietary CursorGothic
@@ -82,6 +82,22 @@
   border-color: color-mix(in oklab, #edecec 28%, transparent);
   background: color-mix(in oklab, #edecec 5%, transparent);
   color: var(--ink);
+}
+
+[data-theme="cursor-dark"] .tree-hover__trigger {
+  border-color: var(--line);
+  color: var(--dim);
+}
+
+[data-theme="cursor-dark"] .tree-hover__trigger:hover,
+[data-theme="cursor-dark"] .tree-hover__trigger:focus-visible {
+  border-color: color-mix(in oklab, #edecec 28%, transparent);
+  color: var(--ink);
+}
+
+[data-theme="cursor-dark"] .tree-hover__panel {
+  border-color: var(--line);
+  background: #0a0906;
 }
 
 [data-theme="cursor-dark"] .progress {

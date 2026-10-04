@@ -82,13 +82,48 @@ const dictionaryEntries = [
     definition: { en: "Confident but incorrect model output. It can invent facts or contradict information already supplied in context; plausible wording is not evidence of correctness.", hr: "Samouvjeren, ali netočan izlaz modela. Može izmišljati činjenice ili proturječiti već zadanom kontekstu; uvjerljiv tekst nije dokaz točnosti." }
   },
   {
+    slug: "parametric-knowledge", title: { en: "Parametric knowledge", hr: "Parametarsko znanje" },
+    aliases: { en: ["parametric knowledge"], hr: ["parametarsko znanje", "parametarskog znanja", "parametarskom znanju", "parametric knowledge"] },
+    definition: { en: "Knowledge stored in the model's parameters at training time. It is compressed, frozen afterwards, and is not a lookup table of facts.", hr: "Znanje spremljeno u parametrima modela u trenutku treniranja. Sažeto je, zatim zamrznuto, i nije tablica činjenica." }
+  },
+  {
+    slug: "parameters", title: { en: "Parameters", hr: "Parametri" },
+    aliases: { en: ["parameter", "parameters"], hr: ["parametar", "parametra", "parametri", "parametre", "parametara", "parametrima", "parameters"] },
+    definition: { en: "The huge arrays of numbers that hold a model's memory after training. They do not change from request to request.", hr: "Veliki nizovi brojeva u kojima stoji pamćenje modela nakon treniranja. Ne mijenjaju se od zahtjeva do zahtjeva." }
+  },
+  {
+    slug: "training", title: { en: "Training", hr: "Treniranje" },
+    aliases: { en: ["training"], hr: ["treniranje", "treniranja", "treniranjem", "training"] },
+    definition: { en: "The process that encodes data into a model's parameters. New facts do not patch in later; the model has to be retrained.", hr: "Proces koji podatke upisuje u parametre modela. Nove činjenice se kasnije ne zakrpe; model treba ponovno trenirati." }
+  },
+  {
+    slug: "knowledge-cutoff", title: { en: "Knowledge cutoff", hr: "Knowledge cutoff" },
+    aliases: { en: ["knowledge cutoff"], hr: ["knowledge cutoff", "knowledge cutoffa", "knowledge cutoffu"] },
+    definition: { en: "The date after which events, libraries and APIs never entered the model's parameters. Asking about later facts without a source invites a factuality hallucination.", hr: "Datum nakon kojeg događaji, biblioteke i API-ji nisu ušli u parametre modela. Pitanje o kasnijim činjenicama bez izvora vodi činjeničnoj halucinaciji." }
+  },
+  {
+    slug: "contextual-knowledge", title: { en: "Contextual knowledge", hr: "Kontekstualno znanje" },
+    aliases: { en: ["contextual knowledge"], hr: ["kontekstualno znanje", "kontekstualnog znanja", "kontekstualnom znanju", "contextual knowledge"] },
+    definition: { en: "Knowledge sitting in the context window for this request. Hallucinations are less common when the agent works from a source in front of it, not from blurred parametric memory.", hr: "Znanje koje je u kontekstnom prozoru ovog zahtjeva. Halucinacije su rjeđe kad agent radi iz izvora pred sobom, ne iz zamagljenog parametarskog pamćenja." }
+  },
+  {
+    slug: "attention-relationship", title: { en: "Attention relationship", hr: "Odnos pažnje" },
+    aliases: { en: ["attention relationship", "attention relationships"], hr: ["odnos pažnje", "odnosa pažnje", "odnosi pažnje", "odnose pažnje", "attention relationship", "attention relationships"] },
+    definition: { en: "A connection the attention mechanism tracks between tokens. As the context window grows, the number of relationships explodes and the model struggles to keep the important ones.", hr: "Veza koju mehanizam pažnje prati među tokenima. Rastom kontekstnog prozora broj veza eksplodira i modelu je teže zadržati bitne." }
+  },
+  {
+    slug: "non-determinism", title: { en: "Non-determinism", hr: "Nedeterminizam" },
+    aliases: { en: ["non-determinism", "non-deterministic"], hr: ["nedeterminizam", "nedeterminizma", "nedeterminizmu", "non-determinism"] },
+    definition: { en: "The same prompt can yield different outputs. A faithfulness error can still appear in the smart zone, just much less often.", hr: "Isti prompt može dati različite izlaze. Pogreška vjernosti može se pojaviti i u smart zoni, samo mnogo rjeđe." }
+  },
+  {
     slug: "attention-degradation", title: { en: "Attention degradation", hr: "Degradacija pažnje" },
     aliases: { en: ["attention degradation"], hr: ["degradacija pažnje", "degradacije pažnje", "degradaciju pažnje", "degradacijom pažnje", "attention degradation"] },
     definition: { en: "The attention mechanism, the system for understanding relationships between tokens, gets worse as it has more to handle.", hr: "Mehanizam pažnje, sustav za razumijevanje odnosa među tokenima, slabi kako ima više za obraditi." }
   },
   {
     slug: "smart-zone", title: { en: "Smart zone / dumb zone", hr: "Smart zona / dumb zona" },
-    aliases: { en: ["smart zone", "smart zones", "dumb zone", "dumb zones"], hr: ["smart zona", "smart zone", "smart zonu", "smart zonom", "dumb zona", "dumb zone", "dumb zonu", "dumb zoni"] },
+    aliases: { en: ["smart zone", "smart zones", "dumb zone", "dumb zones"], hr: ["smart zona", "smart zone", "smart zonu", "smart zonom", "smart zoni", "dumb zona", "dumb zone", "dumb zonu", "dumb zoni"] },
     definition: { en: "The smart zone is the earlier, focused part of a session. As context accumulates, the agent can drift into a dumb zone with more omissions and mistakes. The boundary is not a universal fixed percentage.", hr: "Smart zona je raniji, fokusirani dio sesije. Nakupljanjem konteksta agent može prijeći u dumb zonu s više propusta i pogrešaka. Granica nije univerzalan fiksni postotak." }
   },
   {

@@ -58,7 +58,7 @@ const glossary = (() => {
     close();
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
-        return node.parentElement.closest("a, button, code, pre, .prompt-card, .tree .file, .tree .folder, .eyebrow, [data-dictionary-skip]")
+        return node.parentElement.closest("a, button, code, pre, img, .prompt-card, .tree .file, .tree .folder, .eyebrow, .tree-hover, [data-dictionary-skip]")
           ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
       }
     });

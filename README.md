@@ -14,9 +14,10 @@ python3 -m http.server 4173 --directory site
 Then open [http://localhost:4173/](http://localhost:4173/). Relative asset
 paths work at a GitHub Pages or GitLab Pages subpath without a base URL
 setting. `script.js` holds the English/Croatian content layer and the renderer;
-`styles.css` is the visual system; optional themes live under `themes/`.
+`styles.css` is the visual system; the default Cursor theme and other
+themes live under `themes/`.
 
-The 26-slide deck starts in **Croatian** on every page load. English remains
+The 27-slide deck starts in **Croatian** on every page load. English remains
 available through `L` or the `EN` button. Language is not stored in the URL.
 Titles, navigation labels and dictionary definitions follow the selected
 language. The last resource slides link to the mentioned skills, tools and
@@ -24,10 +25,10 @@ learning resources; the closing slide is the environment goal.
 
 ## Themes
 
-The default look stays the existing cyan/dark deck theme. An opt-in
-**cursor-dark** theme approximates the [Cursor blog](https://cursor.com/blog)
-dark canvas: warm near-black background (`#14120b`), restrained contrast,
-sparse borders, and a quiet orange accent (`#f54e00`).
+The default look is the **cursor-dark** theme. It approximates the
+[Cursor blog](https://cursor.com/blog) dark canvas: warm near-black background
+(`#14120b`), restrained contrast, sparse borders, and a quiet orange accent
+(`#f54e00`). The original cyan deck remains available as `default`.
 
 ### Fonts vs cursor.com
 
@@ -43,9 +44,10 @@ cursor.com uses proprietary webfonts we cannot lawfully redistribute:
 Verdict: **not an exact match** — closest lawful substitute is Cursor’s own
 fallback stacks, not a third-party Google Font stand-in.
 
-Enable it in any of these ways:
+Switch themes in any of these ways:
 
-- URL: `site/index.html?theme=cursor-dark` (alias: `?theme=cursor`)
+- URL: `site/index.html?theme=default` for the original cyan deck, or
+  `?theme=cursor-dark` / `?theme=cursor` to force the Cursor theme
 - Keyboard: press `T` to cycle `default` ↔ `cursor-dark`
 - Chrome control: the theme pill in the top-right
 
@@ -60,7 +62,7 @@ switches locale, `T` switches theme, and `O` (or `⌘K`) opens the slide overvie
 `Esc` closes it.
 
 Slide URLs are one-based: `?slide=5` opens the prompt-to-answer flow,
-`?slide=15` opens the worktrees/Herdr slide and `?slide=23` opens the skills list.
+`?slide=16` opens the worktrees/Herdr slide and `?slide=24` opens the skills list.
 Reloading keeps the same slide number.
 
 ## Dictionary definitions
@@ -68,7 +70,9 @@ Reloading keeps the same slide number.
 Dotted-underlined terms show a definition on hover, keyboard focus or tap.
 `Esc`, clicking outside, scrolling, navigation and locale/theme changes dismiss
 the card. Space and Enter on a focused term open its definition without advancing
-the slide. You can move the pointer into the card to read it.
+the slide. You can move the pointer into the card to read it. On the
+hallucination slide, hover or focus *decision tree* / *stablo odluke* to open
+the factuality vs faithfulness decision tree.
 
 `dictionary.js` contains paired English/Croatian summaries and matching aliases,
 adapted from [Matt Pocock's AI Coding Dictionary](https://www.aihero.dev/ai-coding-dictionary).

@@ -132,6 +132,29 @@ h3 { font: 600 20px/1.1 var(--display); letter-spacing: -.02em; }
 .symptom b { display: block; margin-bottom: 7px; font: 600 17px var(--display); }
 .symptom span { color: var(--muted); font-size: 13px; line-height: 1.42; }
 
+.hallucination { position: relative; }
+.tree-hover { position: relative; margin-top: 22px; }
+.tree-hover__trigger {
+  border: 1px solid var(--line); background: transparent; color: var(--dim);
+  border-radius: 99px; padding: 8px 12px; cursor: zoom-in;
+  font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase;
+}
+.tree-hover__trigger:hover,
+.tree-hover__trigger:focus-visible { color: var(--ink); border-color: var(--cyan); }
+.tree-hover__panel {
+  position: absolute; z-index: 6; left: 50%; bottom: calc(100% + 12px);
+  transform: translateX(-50%); width: min(460px, calc(100vw - 48px));
+  padding: 10px; border: 1px solid var(--line); border-radius: 8px;
+  background: #050505; box-shadow: 0 16px 48px rgba(0, 0, 0, .55);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+.tree-hover:hover .tree-hover__panel,
+.tree-hover:focus-within .tree-hover__panel {
+  opacity: 1; visibility: visible; pointer-events: auto;
+}
+.tree-hover__panel img { display: block; width: 100%; height: auto; max-height: min(58vh, 520px); object-fit: contain; border-radius: 4px; }
+
 .decision { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 37px; }
 .decision__item { min-height: 160px; padding: 18px; border: 1px solid var(--line); background: var(--panel); }
 .decision__item strong { display: block; color: var(--cyan); margin-bottom: 11px; font: 500 12px var(--mono); }
